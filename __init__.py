@@ -34,12 +34,20 @@ class JiraSkill(MycroftSkill):
         jira_user = self.config.get('jira_user')
         jira_project = self.config.get('jira_project')
         
-        issues = self.jira.search_issues('assignee="' + jira_user + '" and project=' + jira_project, maxResults=3)
+        #query = 'assignee="' + jira_user + '" and project=' + jira_project
+        #query = 'assignee="' + jira_user + '" and project=' + jira_project + ' and sprint in openSprints() and "Story points" is empty'
+        query = 'project=' + jira_project + ' and sprint in openSprints() and "Story points" is empty'
+
+        issues = self.jira.search_issues(query, maxResults=3)
         
         for issue in issues:
-          self.speak(issue.fields.summary)
-          self.speak(".")
-          print issue.fields.summary
+        
+          if issue.fields.assignee is not None:
+            #print(dir(issue.fields.assignee))
+            self.speak(issue.fields.assignee.displayName + ' needs to estimate ticket ' + issue.key)
+            #self.speak(issue.fields.summary)
+            self.speak(".")
+            print issue.key + ' ' + issue.fields.summary
         
         self.speak_dialog("jira")
 
