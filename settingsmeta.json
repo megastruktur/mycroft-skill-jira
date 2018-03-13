@@ -1,0 +1,25 @@
+{
+    "identifier": "JiraSkill",
+    "name": "Jira",
+    "skillMetadata": {
+        "sections": [{
+            "name": "Jira Login",
+            "fields": [{
+                "name": "jira_server",
+                "type": "text",
+                "label": "Jira Server",
+                "value": ""
+            }, {
+                "name": "jira_user",
+                "type": "text",
+                "label": "Username",
+                "value": ""
+            }, {
+                "name": "jira_password",
+                "type": "password",
+                "label": "Password",
+                "value": ""
+            }]
+        }]
+    }
+}
