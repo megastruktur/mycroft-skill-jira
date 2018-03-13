@@ -11,43 +11,50 @@ LOGGER = getLogger(__name__)
 
 
 class JiraSkill(MycroftSkill):
-    def __init__(self):
-        super(JiraSkill, self).__init__(name="JiraSkill")
 
+    # Init stuff.
+    def __init__(self):
+        
+      super(JiraSkill, self).__init__(name="JiraSkill")
+    
+      # Settings and etc.
+      self.jira_init()
+
+    # Functionality init.
     def initialize(self):
 
+        # Intents.
         jira_intent = IntentBuilder("JiraIntent"). \
             require("JiraKeyword").build()
         self.register_intent(jira_intent, self.handle_jira_intent)
 
+    # Intent handler.
     def handle_jira_intent(self, message):
-        
-        # Load data from mycroft.conf
-        # JiraSkill prefix.
-        jira_server = self.config.get('jira_server')
+    
         jira_user = self.config.get('jira_user')
-        jira_password = self.config.get('jira_password')
-        #jira_project = self.config.get('jira_project')
-        jira_project = "SEN";
+        jira_project = self.config.get('jira_project')
         
-        print jira_server
-        print jira_user
-        print jira_password
-        
-        jira_options = {'server': jira_server}
-        
-        authed_jira = JIRA(options=jira_options, basic_auth=(jira_user, jira_password))
-        issues = authed_jira.search_issues('assignee="' + jira_user + '" and project=' + jira_project, maxResults=3)
+        issues = self.jira.search_issues('assignee="' + jira_user + '" and project=' + jira_project, maxResults=3)
         
         for issue in issues:
           self.speak(issue.fields.summary)
+          self.speak(".")
           print issue.fields.summary
-          
-        #projects = authed_jira.projects()
-        #for v in projects:
-        #   print v
         
         self.speak_dialog("jira")
+
+    # Initialize JIRA
+    def jira_init(self):
+        
+      # Load data from mycroft.conf
+      # JiraSkill prefix.
+      jira_server = self.config.get('jira_server')
+      jira_user = self.config.get('jira_user')
+      jira_password = self.config.get('jira_password')
+      
+      jira_options = {'server': jira_server}
+      
+      self.jira = JIRA(options=jira_options, basic_auth=(jira_user, jira_password))
 
     def stop(self):
         pass
