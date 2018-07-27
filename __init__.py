@@ -29,17 +29,21 @@ class JiraSkill(MycroftSkill):
     def initialize(self):
 
         ### Intents.
+        jira_intent = IntentBuilder("JiraIntent").require("JiraKeyword").build()
+        self.register_intent(jira_intent, self.handle_jira_intent)
 
-        # Estimates.
-        jira_estimates_intent = IntentBuilder("JiraEstimatesIntent").require("JiraKeyword").build()
-        self.register_intent(jira_estimates_intent, self.handle_jira_etimates_intent)
+    def handle_jira_intent(self, message):
 
-        # Monthly report.
-        jira_monthly_report_intent = IntentBuilder("JiraMonthlyReportIntent").require("JiraMonthlyReportKeyword").build()
-        self.register_intent(jira_monthly_report_intent, self.handle_jira_monthly_report_intent)
+      message_utterance = message.data.get('utterance')
+      
+      if (message_utterance == "monthly report"):
+          self.handle_jira_monthly_report_intent()
+      elif (message_utterance == "estimates"):
+          self.handle_jira_etimates_intent()
+
 
     ### ESTIMATES.
-    def handle_jira_etimates_intent(self, message):
+    def handle_jira_etimates_intent(self):
     
         jira_user = self.config.get('jira_user')
         jira_project = self.config.get('jira_project')
@@ -62,7 +66,7 @@ class JiraSkill(MycroftSkill):
         self.speak_dialog("jira")
 
     ### MONTHLY REPORT
-    def handle_jira_monthly_report_intent(self, message):
+    def handle_jira_monthly_report_intent(self):
       
       dateFrom = date.today().replace(day=1)
       dateTo = date.today()
