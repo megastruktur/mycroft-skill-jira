@@ -32,14 +32,33 @@ class JiraSkill(MycroftSkill):
         jira_intent = IntentBuilder("JiraIntent").require("JiraKeyword").build()
         self.register_intent(jira_intent, self.handle_jira_intent)
 
+        # jira_intent = IntentBuilder("JiraIntent").require("JiraKeyword").build()
+
+    ### General intent handler.
     def handle_jira_intent(self, message):
 
       message_utterance = message.data.get('utterance')
       
-      if (message_utterance == "monthly report"):
+      ### Get intent and methods to execute.
+      if (self._s(message_utterance) == "current_month_report"):
           self.handle_jira_monthly_report_intent()
-      elif (message_utterance == "estimates"):
+      elif (self._s(message_utterance) == "estimates"):
           self.handle_jira_etimates_intent()
+
+    ### Returns synonym intent by message provided
+    ### Add EVERY synonym from list to JiraKeyword.voc
+    def _s(self, phrase):
+
+        synonyms = {
+            "monthly report" : "current_month_report",
+            "mont reepa" : "current_month_report",
+            "estimates" : "estimates"
+        }
+
+        if phrase in synonyms:
+            return synonyms[phrase]
+        
+        return phrase
 
 
     ### ESTIMATES.
